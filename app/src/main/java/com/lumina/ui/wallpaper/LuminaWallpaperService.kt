@@ -65,7 +65,7 @@ class LuminaWallpaperService : WallpaperService() {
                 val x = ((p.x + sin(t + p.phase) * 0.025f + 1f) % 1f) * w
                 val y = ((p.y - frame * (0.00035f + p.radius * 0.00004f) + 1f) % 1f) * h
                 paint.shader = null
-                paint.color = Color.argb((65 + 90 * (0.5 + 0.5 * sin(t + i)).toInt()).coerceIn(45, 155), 220, 235, 255)
+                paint.color = Color.WHITE
                 paint.alpha = (75 + 70 * (0.5f + 0.5f * sin(t + p.phase))).toInt().coerceIn(50, 145)
                 canvas.drawCircle(x, y, p.radius, paint)
             }
