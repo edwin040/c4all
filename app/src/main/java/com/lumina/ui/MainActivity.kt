@@ -117,19 +117,59 @@ private fun LuminaApp(dark: Boolean, accent: Color, accentIndex: Int, onThemeCha
                     "Widgets" -> WidgetsScreen(dark, card, fg, accent)
                     "AOD" -> AodScreen(context, dark, card, fg, accent)
                     "Themes" -> ThemesScreen(dark, card, fg, accentIndex, onAccentChange, onThemeChange)
-                    else -> {
-                        SectionTitle("Settings", fg)
-                        ThemeSwitch(dark, onThemeChange, card, fg, accent)
-                        FeatureCard("App compatibility", "Live wallpapers and home widgets depend on Android launcher and device support.", Icons.Rounded.PhoneAndroid, card, fg, accent) {}
-                        FeatureCard("System UI limitations", "Changing the system status bar, notification shade, lock screen and OEM AOD requires device-specific privileges.", Icons.Rounded.Info, card, fg, accent) {}
-                        FeatureCard("About LUMINA", "Customization toolkit • Early Access", Icons.Rounded.AutoAwesome, card, fg, accent) {}
-                    }
+                    else -> SettingsScreen(context, dark, card, fg, accent, onThemeChange)
                 }
                 Spacer(Modifier.height(24.dp))
                 Text("LUMINA UI  •  EARLY ACCESS", color = fg.copy(alpha = .38f), fontSize = 10.sp, letterSpacing = 1.5.sp)
                 Spacer(Modifier.height(18.dp))
             }
         }
+    }
+}
+
+@Composable
+private fun SettingsScreen(context: Context, dark: Boolean, card: Color, fg: Color, accent: Color, onThemeChange: (Boolean) -> Unit) {
+    val prefs = context.getSharedPreferences("lumina_preferences", Context.MODE_PRIVATE)
+    var blur by remember { mutableFloatStateOf(prefs.getFloat("blur_level", 45f)) }
+    var transparency by remember { mutableFloatStateOf(prefs.getFloat("transparency", 88f)) }
+    var widgetScale by remember { mutableFloatStateOf(prefs.getFloat("widget_scale", 100f)) }
+    var animationSpeed by remember { mutableFloatStateOf(prefs.getFloat("animation_speed", 100f)) }
+    var particles by remember { mutableStateOf(prefs.getBoolean("particles_enabled", true)) }
+    var animations by remember { mutableStateOf(prefs.getBoolean("animations_enabled", true)) }
+    SectionTitle("Appearance & effects", fg)
+    Text("Atur efek visual LUMINA. Nilai disimpan otomatis di perangkat.", color = fg.copy(.65f), fontSize = 12.sp)
+    Spacer(Modifier.height(12.dp))
+    ThemeSwitch(dark, onThemeChange, card, fg, accent)
+    SettingSlider("Blur intensity", "Efek blur pada cahaya wallpaper", blur, blur.toInt().toString() + "%", 0f, 100f, card, fg, accent) { blur = it; prefs.edit { putFloat("blur_level", it) } }
+    SettingSlider("Transparency", "Transparansi permukaan widget jam", transparency, transparency.toInt().toString() + "%", 20f, 100f, card, fg, accent) { transparency = it; prefs.edit { putFloat("transparency", it) }; context.sendBroadcast(Intent("com.lumina.ui.ACTION_REFRESH_WIDGETS").setPackage(context.packageName)) }
+    SettingSlider("Widget scale", "Ukuran teks dan elemen widget jam", widgetScale, widgetScale.toInt().toString() + "%", 80f, 130f, card, fg, accent) { widgetScale = it; prefs.edit { putFloat("widget_scale", it) }; context.sendBroadcast(Intent("com.lumina.ui.ACTION_REFRESH_WIDGETS").setPackage(context.packageName)) }
+    SettingSlider("Animation speed", "Kecepatan gerak wallpaper hidup", animationSpeed, animationSpeed.toInt().toString() + "%", 25f, 200f, card, fg, accent) { animationSpeed = it; prefs.edit { putFloat("animation_speed", it) } }
+    ToggleSetting("Enable animations", "Aktifkan atau hentikan gerakan wallpaper", animations, card, fg, accent) { animations = it; prefs.edit { putBoolean("animations_enabled", it) } }
+    ToggleSetting("Floating particles", "Tampilkan partikel cahaya pada wallpaper", particles, card, fg, accent) { particles = it; prefs.edit { putBoolean("particles_enabled", it) } }
+    Spacer(Modifier.height(8.dp))
+    FeatureCard("Compatibility", "Blur dan transparansi sistem Android di luar LUMINA tetap mengikuti izin launcher dan produsen perangkat.", Icons.Rounded.Info, card, fg, accent) {}
+}
+@Composable
+private fun SettingSlider(title: String, subtitle: String, value: Float, valueLabel: String, min: Float, max: Float, card: Color, fg: Color, accent: Color, onValue: (Float) -> Unit) {
+    Column(Modifier.fillMaxWidth().padding(top = 10.dp).clip(RoundedCornerShape(18.dp)).background(card).padding(15.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(title, color = fg, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                Text(subtitle, color = fg.copy(.6f), fontSize = 11.sp)
+            }
+            Text(valueLabel, color = accent, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+        }
+        Slider(value = value.coerceIn(min, max), onValueChange = onValue, valueRange = min..max)
+    }
+}
+@Composable
+private fun ToggleSetting(title: String, subtitle: String, checked: Boolean, card: Color, fg: Color, accent: Color, onChecked: (Boolean) -> Unit) {
+    Row(Modifier.fillMaxWidth().padding(top = 10.dp).clip(RoundedCornerShape(18.dp)).background(card).padding(15.dp), verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Text(title, color = fg, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+            Text(subtitle, color = fg.copy(.6f), fontSize = 11.sp)
+        }
+        Switch(checked = checked, onCheckedChange = onChecked)
     }
 }
 
