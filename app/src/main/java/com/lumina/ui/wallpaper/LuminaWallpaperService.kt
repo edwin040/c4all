@@ -31,9 +31,9 @@ class LuminaWallpaperService : WallpaperService() {
                 if (canvas != null) {
                     try { drawScene(canvas) } finally { surfaceHolder.unlockCanvasAndPost(canvas) }
                 }
-                frame++
                 val prefs = getSharedPreferences("lumina_preferences", MODE_PRIVATE)
                 val enabled = prefs.getBoolean("animations_enabled", true)
+                if (enabled) frame++
                 val speed = prefs.getFloat("animation_speed", 100f).coerceIn(25f, 200f)
                 handler.postDelayed(this, if (enabled) (42f * 100f / speed).toLong().coerceIn(20L, 170L) else 1000L)
             }
