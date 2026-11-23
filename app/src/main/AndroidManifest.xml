@@ -25,7 +25,8 @@
             android:name=".widget.LuminaWidgetProvider"
             android:label="LUMINA Clock"
             android:exported="true">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.lumina.ui.ACTION_REFRESH_WIDGETS" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/lumina_widget_info" />
         </receiver>
     </application>
