@@ -18,6 +18,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Monday, 24 November"
-        android:textColor="#DDEFFFFFF"
+        android:textColor="#DDFFFFFF"
         android:textSize="13sp" />
 </LinearLayout>
