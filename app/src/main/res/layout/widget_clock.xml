@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:padding="18dp"
+    android:background="#D9212638">
+    <TextView
+        android:id="@+id/widget_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="09:41"
+        android:textColor="#FFFFFFFF"
+        android:textSize="32sp"
+        android:fontFamily="sans" />
+    <TextView
+        android:id="@+id/widget_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Monday, 24 November"
+        android:textColor="#DDEFFFFFF"
+        android:textSize="13sp" />
+</LinearLayout>
