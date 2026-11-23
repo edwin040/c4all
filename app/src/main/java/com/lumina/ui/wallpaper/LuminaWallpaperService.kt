@@ -57,16 +57,16 @@ class LuminaWallpaperService : WallpaperService() {
             val w = canvas.width.toFloat()
             val h = canvas.height.toFloat()
             canvas.drawColor(Color.rgb(12, 17, 34))
-            val t = frame * 0.012f
-            glow(canvas, w * (0.28f + 0.12f * sin(t)), h * 0.30f, w * 0.78f, intArrayOf(0x884A8DFF.toInt(), 0x004A8DFF))
-            glow(canvas, w * (0.72f + 0.10f * sin(t * 0.7f + 2f)), h * 0.62f, w * 0.72f, intArrayOf(0x887C5CFF.toInt(), 0x007C5CFF))
-            glow(canvas, w * 0.48f, h * (0.82f + 0.04f * sin(t * 0.5f)), w * 0.65f, intArrayOf(0x5558D6D0, 0x0058D6D0))
+            val t = frame * 0.012
+            glow(canvas, w * (0.28f + 0.12f * sin(t).toFloat()), h * 0.30f, w * 0.78f, intArrayOf(0x884A8DFF.toInt(), 0x004A8DFF))
+            glow(canvas, w * (0.72f + 0.10f * sin(t * 0.7 + 2.0).toFloat()), h * 0.62f, w * 0.72f, intArrayOf(0x887C5CFF.toInt(), 0x007C5CFF))
+            glow(canvas, w * 0.48f, h * (0.82f + 0.04f * sin(t * 0.5).toFloat()), w * 0.65f, intArrayOf(0x5558D6D0, 0x0058D6D0))
             particles.forEachIndexed { i, p ->
-                val x = ((p.x + sin(t + p.phase) * 0.025f + 1f) % 1f) * w
+                val x = ((p.x + sin(t + p.phase.toDouble()).toFloat() * 0.025f + 1f) % 1f) * w
                 val y = ((p.y - frame * (0.00035f + p.radius * 0.00004f) + 1f) % 1f) * h
                 paint.shader = null
                 paint.color = Color.WHITE
-                paint.alpha = (75 + 70 * (0.5f + 0.5f * sin(t + p.phase))).toInt().coerceIn(50, 145)
+                paint.alpha = (75 + 70 * (0.5f + 0.5f * sin(t + p.phase.toDouble()).toFloat())).toInt().coerceIn(50, 145)
                 canvas.drawCircle(x, y, p.radius, paint)
             }
             paint.alpha = 255
