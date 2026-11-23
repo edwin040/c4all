@@ -56,11 +56,19 @@ class LuminaWallpaperService : WallpaperService() {
         private fun drawScene(canvas: Canvas) {
             val w = canvas.width.toFloat()
             val h = canvas.height.toFloat()
+            val wallpaperIndex = getSharedPreferences("lumina_preferences", MODE_PRIVATE).getInt("wallpaper_index", 0).coerceIn(0, 3)
+            val palettes = arrayOf(
+                intArrayOf(0x884A8DFF.toInt(), 0x887C5CFF.toInt(), 0x5558D6D0),
+                intArrayOf(0x8840B8D8.toInt(), 0x8860DCC8.toInt(), 0x5558A9D6),
+                intArrayOf(0x887B5CE1.toInt(), 0x88B06BE8.toInt(), 0x557B58D6),
+                intArrayOf(0x88D85A9B.toInt(), 0x88F08B9C.toInt(), 0x55D65A8A)
+            )
+            val palette = palettes[wallpaperIndex]
             canvas.drawColor(Color.rgb(12, 17, 34))
             val t = frame * 0.012
-            glow(canvas, w * (0.28f + 0.12f * sin(t).toFloat()), h * 0.30f, w * 0.78f, intArrayOf(0x884A8DFF.toInt(), 0x004A8DFF))
-            glow(canvas, w * (0.72f + 0.10f * sin(t * 0.7 + 2.0).toFloat()), h * 0.62f, w * 0.72f, intArrayOf(0x887C5CFF.toInt(), 0x007C5CFF))
-            glow(canvas, w * 0.48f, h * (0.82f + 0.04f * sin(t * 0.5).toFloat()), w * 0.65f, intArrayOf(0x5558D6D0, 0x0058D6D0))
+            glow(canvas, w * (0.28f + 0.12f * sin(t).toFloat()), h * 0.30f, w * 0.78f, intArrayOf(palette[0], 0x004A8DFF))
+            glow(canvas, w * (0.72f + 0.10f * sin(t * 0.7 + 2.0).toFloat()), h * 0.62f, w * 0.72f, intArrayOf(palette[1], 0x007C5CFF))
+            glow(canvas, w * 0.48f, h * (0.82f + 0.04f * sin(t * 0.5).toFloat()), w * 0.65f, intArrayOf(palette[2], 0x0058D6D0))
             particles.forEachIndexed { i, p ->
                 val x = ((p.x + sin(t + p.phase.toDouble()).toFloat() * 0.025f + 1f) % 1f) * w
                 val y = ((p.y - frame * (0.00035f + p.radius * 0.00004f) + 1f) % 1f) * h
