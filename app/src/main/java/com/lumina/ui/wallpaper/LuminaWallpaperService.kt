@@ -32,7 +32,10 @@ class LuminaWallpaperService : WallpaperService() {
                     try { drawScene(canvas) } finally { surfaceHolder.unlockCanvasAndPost(canvas) }
                 }
                 frame++
-                handler.postDelayed(this, 42L)
+                val prefs = getSharedPreferences("lumina_preferences", MODE_PRIVATE)
+                val enabled = prefs.getBoolean("animations_enabled", true)
+                val speed = prefs.getFloat("animation_speed", 100f).coerceIn(25f, 200f)
+                handler.postDelayed(this, if (enabled) (42f * 100f / speed).toLong().coerceIn(20L, 170L) else 1000L)
             }
         }
 
@@ -65,11 +68,15 @@ class LuminaWallpaperService : WallpaperService() {
             )
             val palette = palettes[wallpaperIndex]
             canvas.drawColor(Color.rgb(12, 17, 34))
-            val t = frame * 0.012
-            glow(canvas, w * (0.28f + 0.12f * sin(t).toFloat()), h * 0.30f, w * 0.78f, intArrayOf(palette[0], 0x004A8DFF))
-            glow(canvas, w * (0.72f + 0.10f * sin(t * 0.7 + 2.0).toFloat()), h * 0.62f, w * 0.72f, intArrayOf(palette[1], 0x007C5CFF))
-            glow(canvas, w * 0.48f, h * (0.82f + 0.04f * sin(t * 0.5).toFloat()), w * 0.65f, intArrayOf(palette[2], 0x0058D6D0))
-            particles.forEachIndexed { i, p ->
+            val prefs = getSharedPreferences("lumina_preferences", MODE_PRIVATE)
+            val blurFactor = 0.35f + prefs.getFloat("blur_level", 45f).coerceIn(0f, 100f) / 100f * 1.3f
+            val motionEnabled = prefs.getBoolean("animations_enabled", true)
+            val particlesEnabled = prefs.getBoolean("particles_enabled", true)
+            val t = if (motionEnabled) frame * 0.012 else 0.0
+            glow(canvas, w * (0.28f + 0.12f * sin(t).toFloat()), h * 0.30f, w * 0.78f * blurFactor, intArrayOf(palette[0], 0x004A8DFF))
+            glow(canvas, w * (0.72f + 0.10f * sin(t * 0.7 + 2.0).toFloat()), h * 0.62f, w * 0.72f * blurFactor, intArrayOf(palette[1], 0x007C5CFF))
+            glow(canvas, w * 0.48f, h * (0.82f + 0.04f * sin(t * 0.5).toFloat()), w * 0.65f * blurFactor, intArrayOf(palette[2], 0x0058D6D0))
+            if (particlesEnabled) particles.forEachIndexed { i, p ->
                 val x = ((p.x + sin(t + p.phase.toDouble()).toFloat() * 0.025f + 1f) % 1f) * w
                 val y = ((p.y - frame * (0.00035f + p.radius * 0.00004f) + 1f) % 1f) * h
                 paint.shader = null
