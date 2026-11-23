@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">LUMINA UI</string>
+    <string name="wallpaper_description">Soft flowing light with ambient particles by LUMINA UI</string>
+    <string name="widget_description">Minimal glass-inspired clock and date widget</string>
+</resources>
